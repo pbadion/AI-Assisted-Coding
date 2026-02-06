@@ -4,11 +4,13 @@
  */
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCartContext } from '../contexts/CartContext';
 import CartItem from '../components/Cart/CartItem';
 import './CartPage.css';
 
 const CartPage: React.FC = () => {
+  const navigate = useNavigate();
   const { cart, clearCart } = useCartContext();
 
   if (cart.items.length === 0) {
@@ -61,7 +63,10 @@ const CartPage: React.FC = () => {
               <span>Total:</span>
               <span>${cart.totalPrice.toFixed(2)}</span>
             </div>
-            <button className="btn-primary checkout-btn">
+            <button 
+              className="btn-primary checkout-btn"
+              onClick={() => navigate('/checkout')}
+            >
               Proceed to Checkout
             </button>
           </div>

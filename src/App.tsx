@@ -10,6 +10,8 @@ import Header from './components/Header/Header';
 import HomePage from './pages/HomePage';
 import CategoryPage from './pages/CategoryPage';
 import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
+import CheckoutSuccessPage from './pages/CheckoutSuccessPage';
 import Footer from './components/Footer/Footer';
 import './App.css';
 
@@ -21,8 +23,10 @@ const App: React.FC = () => {
           <Header />
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/:category" element={<CategoryPage />} />
             <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/checkout-success" element={<CheckoutSuccessPage />} />
+            <Route path="/:category" element={<CategoryPage />} />
           </Routes>
           <Footer />
         </div>
