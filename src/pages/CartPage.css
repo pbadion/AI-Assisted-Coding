@@ -1,34 +1,5 @@
 /* CartPage Component Styles */
-.cart-empty-page {
-  text-align: center;
-  padding: 3rem 0;
-}
-
-.cart-empty-page h1 {
-  margin-bottom: 2rem;
-  color: #2c3e50;
-  font-size: 2.5rem;
-}
-
-.empty-cart-content {
-  background: white;
-  padding: 3rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.empty-cart-content h2 {
-  margin: 0 0 1rem 0;
-  color: #666;
-  font-size: 1.5rem;
-}
-
-.empty-cart-content p {
-  margin: 0 0 2rem 0;
-  color: #999;
-}
+/* Empty state is now handled by shared EmptyState component (shared.css) */
 
 .cart-page {
   margin: 2rem 0;
@@ -62,29 +33,7 @@
   padding: 1rem;
 }
 
-.cart-summary {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  height: fit-content;
-}
-
-.cart-summary-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.cart-summary-row.total {
-  font-weight: bold;
-  font-size: 1.2rem;
-  color: #2c3e50;
-  border-bottom: 2px solid #2c3e50;
-  margin-bottom: 1.5rem;
-}
+/* Order summary card is now handled by shared OrderSummary component (shared.css) */
 
 .checkout-btn {
   width: 100%;

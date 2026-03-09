@@ -1,40 +1,18 @@
-/**
- * HomePage Component - React version of index.html
- * Displays hero carousel, monthly pies, and category links
- */
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCartContext } from '../contexts/CartContext';
 import { useMonthlyPies } from '../hooks/usePies';
+import { LoadingSpinner, ErrorMessage } from '../components/shared';
 import PieCard from '../components/PieCard/PieCard';
-import Hero from   '../components/Hero/Hero';
+import Hero from '../components/Hero/Hero';
 import './HomePage.css';
 
 const HomePage: React.FC = () => {
   const { addToCart } = useCartContext();
   const { pies: monthlyPies, loading, error } = useMonthlyPies();
 
-  const handleAddToCart = (pie: any) => {
-    addToCart(pie);
-  };
-
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner">Loading...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="error-container">
-        <h2>Failed to load pies of the month</h2>
-        <p>{error}</p>
-      </div>
-    );
-  }
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage title="Failed to load pies of the month" message={error} />;
 
   return (
     <main className="container">
@@ -43,11 +21,11 @@ const HomePage: React.FC = () => {
       <section id="featured" className="featured">
         <h2>Pies of the Month</h2>
         <div className="pies-grid">
-          {monthlyPies.map((pie: any) => (
+          {monthlyPies.map((pie) => (
             <PieCard 
               key={pie.id} 
               pie={pie} 
-              onAddToCart={handleAddToCart}
+              onAddToCart={addToCart}
             />
           ))}
         </div>

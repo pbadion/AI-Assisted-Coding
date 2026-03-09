@@ -14,6 +14,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import CheckoutSuccessPage from './pages/CheckoutSuccessPage';
 import Footer from './components/Footer/Footer';
 import './App.css';
+import './components/shared/shared.css';
 
 const App: React.FC = () => {
   return (

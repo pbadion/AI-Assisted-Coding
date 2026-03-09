@@ -1,11 +1,7 @@
-/**
- * CheckoutPage Component - Checkout form with shipping information
- * Includes form validation and order submission
- */
-
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useCartContext } from '../contexts/CartContext';
+import { EmptyState, OrderSummary } from '../components/shared';
 import './CheckoutPage.css';
 
 interface FormData {
@@ -37,14 +33,12 @@ const CheckoutPage: React.FC = () => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    // Name validation
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
     } else if (formData.name.trim().length < 2) {
       newErrors.name = 'Name must be at least 2 characters';
     }
 
-    // Email validation
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else {
@@ -54,7 +48,6 @@ const CheckoutPage: React.FC = () => {
       }
     }
 
-    // Phone validation
     if (!formData.phone.trim()) {
       newErrors.phone = 'Phone number is required';
     } else {
@@ -64,7 +57,6 @@ const CheckoutPage: React.FC = () => {
       }
     }
 
-    // Address validation
     if (!formData.address.trim()) {
       newErrors.address = 'Address is required';
     } else if (formData.address.trim().length < 10) {
@@ -77,61 +69,40 @@ const CheckoutPage: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    // Clear error when user starts typing
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name as keyof FormErrors]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: undefined,
-      }));
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
 
     try {
-      // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Generate order number (format: ORD-XXXXXX with timestamp for uniqueness)
       const timestamp = Date.now().toString(36).toUpperCase();
       const random = Math.random().toString(36).substring(2, 6).toUpperCase();
       const orderNumber = `ORD-${timestamp}-${random}`;
 
-      // Navigate to success page with order number
       navigate('/checkout-success', { state: { orderNumber } });
     } catch (error) {
       console.error('Error processing order:', error);
       setIsSubmitting(false);
-      // In a real app, you'd show an error message to the user
       alert('There was an error processing your order. Please try again.');
     }
   };
 
   if (cart.items.length === 0) {
     return (
-      <main className="container">
-        <div className="checkout-empty">
-          <h1>Checkout</h1>
-          <div className="empty-checkout-content">
-            <h2>Your cart is empty</h2>
-            <p>Add some delicious pies to your cart before checking out!</p>
-            <Link to="/" className="btn-primary">
-              Continue Shopping
-            </Link>
-          </div>
-        </div>
-      </main>
+      <EmptyState
+        heading="Checkout"
+        description="Add some delicious pies to your cart before checking out!"
+      />
     );
   }
 
@@ -219,30 +190,9 @@ const CheckoutPage: React.FC = () => {
             </form>
           </div>
 
-          <div className="checkout-summary">
+          <OrderSummary cart={cart} showItemDetails>
             <h2>Order Summary</h2>
-            <div className="order-items">
-              {cart.items.map((item) => (
-                <div key={item.id} className="order-item">
-                  <span className="order-item-name">{item.name}</span>
-                  <span className="order-item-quantity">x{item.quantity}</span>
-                  <span className="order-item-price">${(item.price * item.quantity).toFixed(2)}</span>
-                </div>
-              ))}
-            </div>
-            <div className="order-summary-row">
-              <span>Items ({cart.totalQuantity}):</span>
-              <span>${cart.totalPrice.toFixed(2)}</span>
-            </div>
-            <div className="order-summary-row">
-              <span>Shipping:</span>
-              <span>Free</span>
-            </div>
-            <div className="order-summary-row total">
-              <span>Total:</span>
-              <span>${cart.totalPrice.toFixed(2)}</span>
-            </div>
-          </div>
+          </OrderSummary>
         </div>
       </div>
     </main>
@@ -250,4 +200,3 @@ const CheckoutPage: React.FC = () => {
 };
 
 export default CheckoutPage;
-

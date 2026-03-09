@@ -1,49 +1,26 @@
-/**
- * useCart Hook - React hook for cart management
- * Converts cartStorage logic to React state management
- */
-
 import { useState, useEffect, useCallback } from 'react';
 import { Cart, Pie, UseCartReturn } from '../types/pie';
 import { cartStorage } from '../utils/cartStorage';
 
+const buildCartSnapshot = (): Cart => ({
+  items: cartStorage.getCart(),
+  totalQuantity: cartStorage.getCartQuantity(),
+  totalPrice: cartStorage.getCartTotal(),
+});
+
+const EMPTY_CART: Cart = { items: [], totalQuantity: 0, totalPrice: 0 };
+
 export const useCart = (): UseCartReturn => {
-  const [cart, setCart] = useState<Cart>({
-    items: [],
-    totalQuantity: 0,
-    totalPrice: 0
-  });
+  const [cart, setCart] = useState<Cart>(EMPTY_CART);
 
-  // Load cart from localStorage on mount
   useEffect(() => {
-    const loadCart = () => {
-      const items = cartStorage.getCart();
-      const totalQuantity = cartStorage.getCartQuantity();
-      const totalPrice = cartStorage.getCartTotal();
-      
-      setCart({
-        items,
-        totalQuantity,
-        totalPrice
-      });
-    };
-
-    loadCart();
+    setCart(buildCartSnapshot());
   }, []);
 
-  // Update cart state when localStorage changes (for cross-tab sync)
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'cart') {
-        const items = cartStorage.getCart();
-        const totalQuantity = cartStorage.getCartQuantity();
-        const totalPrice = cartStorage.getCartTotal();
-        
-        setCart({
-          items,
-          totalQuantity,
-          totalPrice
-        });
+        setCart(buildCartSnapshot());
       }
     };
 
@@ -52,71 +29,30 @@ export const useCart = (): UseCartReturn => {
   }, []);
 
   const addToCart = useCallback((pie: Pie) => {
-    const success = cartStorage.addToCart(pie);
-    if (success) {
-      const items = cartStorage.getCart();
-      const totalQuantity = cartStorage.getCartQuantity();
-      const totalPrice = cartStorage.getCartTotal();
-      
-      setCart({
-        items,
-        totalQuantity,
-        totalPrice
-      });
+    if (cartStorage.addToCart(pie)) {
+      setCart(buildCartSnapshot());
     }
   }, []);
 
   const removeFromCart = useCallback((id: string) => {
-    const success = cartStorage.removeFromCart(id);
-    if (success) {
-      const items = cartStorage.getCart();
-      const totalQuantity = cartStorage.getCartQuantity();
-      const totalPrice = cartStorage.getCartTotal();
-      
-      setCart({
-        items,
-        totalQuantity,
-        totalPrice
-      });
+    if (cartStorage.removeFromCart(id)) {
+      setCart(buildCartSnapshot());
     }
   }, []);
 
   const updateQuantity = useCallback((id: string, quantity: number) => {
-    const success = cartStorage.updateQuantity(id, quantity);
-    if (success) {
-      const items = cartStorage.getCart();
-      const totalQuantity = cartStorage.getCartQuantity();
-      const totalPrice = cartStorage.getCartTotal();
-      
-      setCart({
-        items,
-        totalQuantity,
-        totalPrice
-      });
+    if (cartStorage.updateQuantity(id, quantity)) {
+      setCart(buildCartSnapshot());
     }
   }, []);
 
   const clearCart = useCallback(() => {
-    const success = cartStorage.clearCart();
-    if (success) {
-      setCart({
-        items: [],
-        totalQuantity: 0,
-        totalPrice: 0
-      });
+    if (cartStorage.clearCart()) {
+      setCart(EMPTY_CART);
     }
   }, []);
 
-  const isInCart = useCallback((id: string) => {
-    return cartStorage.isInCart(id);
-  }, []);
+  const isInCart = useCallback((id: string) => cartStorage.isInCart(id), []);
 
-  return {
-    cart,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    clearCart,
-    isInCart
-  };
+  return { cart, addToCart, removeFromCart, updateQuantity, clearCart, isInCart };
 };

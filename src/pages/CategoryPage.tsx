@@ -1,15 +1,18 @@
-/**
- * CategoryPage Component - React version of category pages
- * Displays pies for a specific category with search functionality
- */
-
 import React, { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useCartContext } from '../contexts/CartContext';
 import { usePies } from '../hooks/usePies';
-import PieCard from   '../components/PieCard/PieCard';
-import SearchBar from   '../components/SearchBar/SearchBar';
+import { Pie } from '../types/pie';
+import { LoadingSpinner, ErrorMessage } from '../components/shared';
+import PieCard from '../components/PieCard/PieCard';
+import SearchBar from '../components/SearchBar/SearchBar';
 import './CategoryPage.css';
+
+const CATEGORY_TITLES: Record<string, string> = {
+  fruit: 'Fruit Pies',
+  cheesecake: 'Cheesecakes',
+  seasonal: 'Seasonal Pies',
+};
 
 const CategoryPage: React.FC = () => {
   const { category } = useParams<{ category: string }>();
@@ -22,58 +25,29 @@ const CategoryPage: React.FC = () => {
     if (!searchQuery.trim()) return pies;
     
     const query = searchQuery.toLowerCase();
-    return pies.filter((pie: any) => 
+    return pies.filter((pie: Pie) => 
       pie.name.toLowerCase().includes(query) ||
       pie.description.toLowerCase().includes(query)
     );
   }, [pies, searchQuery]);
 
-  const handleAddToCart = (pie: any) => {
-    addToCart(pie);
-  };
+  const categoryTitle = CATEGORY_TITLES[category ?? ''] ?? 'All Pies';
 
-  const handleSearchChange = (query: string) => {
-    setSearchQuery(query);
-  };
-
-  const getCategoryTitle = (category: string | undefined) => {
-    switch (category) {
-      case 'fruit': return 'Fruit Pies';
-      case 'cheesecake': return 'Cheesecakes';
-      case 'seasonal': return 'Seasonal Pies';
-      default: return 'All Pies';
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner">Loading pies...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="error-container">
-        <h2>Failed to load pies</h2>
-        <p>{error}</p>
-      </div>
-    );
-  }
+  if (loading) return <LoadingSpinner message="Loading pies..." />;
+  if (error) return <ErrorMessage title="Failed to load pies" message={error} />;
 
   return (
     <main className="container">
       <section className="page-header">
-        <h1>{getCategoryTitle(category)}</h1>
-        <p>Discover our delicious {getCategoryTitle(category).toLowerCase()}</p>
+        <h1>{categoryTitle}</h1>
+        <p>Discover our delicious {categoryTitle.toLowerCase()}</p>
       </section>
 
       <section className="search-section">
         <SearchBar 
           value={searchQuery}
-          onChange={handleSearchChange}
-          placeholder={`Search ${getCategoryTitle(category).toLowerCase()}...`}
+          onChange={setSearchQuery}
+          placeholder={`Search ${categoryTitle.toLowerCase()}...`}
         />
       </section>
 
@@ -90,11 +64,11 @@ const CategoryPage: React.FC = () => {
               </p>
             </div>
           ) : (
-            filteredPies.map((pie: any) => (
+            filteredPies.map((pie: Pie) => (
               <PieCard 
                 key={pie.id} 
                 pie={pie} 
-                onAddToCart={handleAddToCart}
+                onAddToCart={addToCart}
               />
             ))
           )}
