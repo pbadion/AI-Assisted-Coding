@@ -1,0 +1,22 @@
+name: Run Bash Script
+
+on: [push, workflow_dispatch]
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run bash commands
+        run: |
+          git remote add upstream https://github.com/adhithiravi/AI-Assisted-Coding.git
+          git fetch upstream
+          git checkout -b m1-complete upstream/m1-complete
+          git checkout -b m1-starter upstream/m1-starter
+          git checkout -b m2-completed upstream/m2-completed
+          git checkout -b m2-starter upstream/m2-starter
+          git push origin m1-complete
+          git push origin m1-starter
+          git push origin m2-completed
+          git push origin m2-starter
